@@ -32,11 +32,6 @@
 	}
 </script>
 
-<svelte:head>
-	<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-	<script defer src="https://pyscript.net/latest/pyscript.js"></script>
-</svelte:head>
-
 <section class="section">
 	<div class="container">
 		<h1 class="title has-text-centered">UP Bank Transactions Tracker</h1>
