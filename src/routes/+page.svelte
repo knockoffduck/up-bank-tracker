@@ -1,0 +1,60 @@
+<script>
+	import papa from 'papaparse';
+	import Dropzone from 'svelte-file-dropzone';
+	import '../app.scss';
+	import Table from './table.svelte';
+	let parsed = [];
+	let headers;
+	let files = {
+		accepted: [],
+		rejected: []
+	};
+
+	function csvParse(csvFile) {
+		papa.parse(csvFile, {
+			header: true,
+			skipEmptyLines: true,
+			complete: (results) => {
+				parsed = results.data;
+			}
+		});
+	}
+
+	function handleFilesSelect(e) {
+		const { acceptedFiles, fileRejections } = e.detail;
+		files.accepted = [...files.accepted, ...acceptedFiles];
+		files.rejected = [...files.rejected, ...fileRejections];
+		csvParse(files.accepted[0]);
+	}
+	$: if (parsed.length > 0) {
+		headers = parsed[0];
+		console.log(Object.keys(headers));
+	}
+</script>
+
+<svelte:head>
+	<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+	<script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</svelte:head>
+
+<section class="section">
+	<div class="container">
+		<h1 class="title has-text-centered">Upload a csv of the measurements:</h1>
+	</div>
+</section>
+
+<div class="container">
+	<div class="container">
+		<py-script> print('Helloworld') </py-script>
+	</div>
+	<Dropzone on:drop={handleFilesSelect} />
+	<ul>
+		{#await parsed}
+			<p>loading...</p>
+		{:then parsed}
+			<div class="container">
+				<Table tableData={parsed} />
+			</div>
+		{/await}
+	</ul>
+</div>
