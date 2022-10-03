@@ -39,14 +39,12 @@
 
 <section class="section">
 	<div class="container">
-		<h1 class="title has-text-centered">Upload a csv of the measurements:</h1>
+		<h1 class="title has-text-centered">UP Bank Transactions Tracker</h1>
+		<h3 class="has-text-centered">Upload CSV</h3>
 	</div>
 </section>
 
 <div class="container">
-	<div class="container">
-		<py-script> print('Helloworld') </py-script>
-	</div>
 	<Dropzone on:drop={handleFilesSelect} />
 	<ul>
 		{#await parsed}
