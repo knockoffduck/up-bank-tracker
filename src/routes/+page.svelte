@@ -1,6 +1,7 @@
 <script>
 	import papa from 'papaparse';
 	import Dropzone from 'svelte-file-dropzone';
+	import parser from 'xml2json';
 	import '../app.scss';
 	import Table from './table.svelte';
 	let parsed = [];
@@ -10,7 +11,13 @@
 		rejected: []
 	};
 
-	function csvParse(csvFile) {
+	function xmlParse(e) {
+		let xmlFile = handleFilesSelect(e);
+		let result = parser.toJson(xmlFile);
+	}
+
+	function csvParse(e) {
+		let csvFile = handleFilesSelect(e);
 		papa.parse(csvFile, {
 			header: true,
 			skipEmptyLines: true,
@@ -24,7 +31,7 @@
 		const { acceptedFiles, fileRejections } = e.detail;
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
-		csvParse(files.accepted[0]);
+		return files.accepted[0];
 	}
 	$: if (parsed.length > 0) {
 		headers = parsed[0];
@@ -40,14 +47,19 @@
 </section>
 
 <div class="container">
-	<Dropzone on:drop={handleFilesSelect} />
-	<ul>
-		{#await parsed}
-			<p>loading...</p>
-		{:then parsed}
-			<div class="container">
-				<Table tableData={parsed} />
-			</div>
-		{/await}
-	</ul>
+	<div class="container">
+		<Dropzone on:drop={csvParse} />
+		<ul>
+			{#await parsed}
+				<p>loading...</p>
+			{:then parsed}
+				<div class="container">
+					<Table tableData={parsed} />
+				</div>
+			{/await}
+		</ul>
+	</div>
+	<div class="container">
+		<Dropzone on:drop={csvParse} />
+	</div>
 </div>
